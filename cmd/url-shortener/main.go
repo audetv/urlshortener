@@ -1,7 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"github.com/audetv/urlshortener/internal/config"
+	"github.com/audetv/urlshortener/internal/lib/logger/sl"
+	"github.com/audetv/urlshortener/internal/storage/sqlite"
 	"log/slog"
 	"os"
 )
@@ -20,6 +23,12 @@ func main() {
 
 	log.Info("initializing server", slog.String("address", cfg.Address))
 	log.Debug("logger debug mode enabled")
+
+	storage, err := sqlite.New(cfg.StoragePath)
+	if err != nil {
+		log.Error("failed to initialize storage", sl.Err(err))
+	}
+	fmt.Println(storage)
 }
 
 func setupLogger(env string) *slog.Logger {
