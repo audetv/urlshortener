@@ -1,4 +1,4 @@
-module urlshortener
+module github.com/audetv/urlshortener
 
 go 1.20
 
