@@ -1,7 +1,7 @@
 # config/local.yaml
 
 env: "local" # Окружение - local, dev или prod
-storage_page: "./storage/storage.db" # файл, в котором будет храниться БД
+storage_path: "./storage/storage.db" # файл, в котором будет храниться БД
 http_server: # Конфигурация http сервера
   address: "localhost:8082"
   timout: 4s
