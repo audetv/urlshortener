@@ -9,3 +9,8 @@ export CONFIG_PATH=./config/local.yaml
 ```
 CONFIG_PATH=./config/local.yaml ./urlshortener
 ```
+
+```
+CONFIG_PATH=./config/local.yaml go run ./cmd/url-shortener/
+main.go
+```
