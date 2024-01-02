@@ -1,4 +1,12 @@
-// internal/config/config.go
+// Package config internal/config/config.go
+package config
+
+import (
+	"github.com/ilyakaznacheev/cleanenv"
+	"log"
+	"os"
+	"time"
+)
 
 type Config struct {
 	Env         string `yaml:"env" env-default:"development"`
