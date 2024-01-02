@@ -14,6 +14,12 @@ const (
 
 func main() {
 	cfg := config.MustLoad()
+
+	log := setupLogger(cfg.Env)
+	log = log.With(slog.String("env", cfg.Env)) // к каждому сообщению будет добавляться поле с информацией о текущем окружении
+
+	log.Info("initializing server", slog.String("address", cfg.Address))
+	log.Debug("logger debug mode enabled")
 }
 
 func setupLogger(env string) *slog.Logger {
