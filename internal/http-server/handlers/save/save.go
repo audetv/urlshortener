@@ -75,7 +75,7 @@ func New(log *slog.Logger, urlSaver URLSaver) http.HandlerFunc {
 
 			log.Error("invalid request", sl.Err(err))
 
-			render.JSON(w, r, resp.Error(validateErr.Error()))
+			render.JSON(w, r, resp.ValidationError(validateErr))
 
 			return
 		}
