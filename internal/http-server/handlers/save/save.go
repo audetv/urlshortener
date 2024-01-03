@@ -3,6 +3,7 @@ package save
 import (
 	"errors"
 	"github.com/audetv/urlshortener/internal/lib/logger/sl"
+	"github.com/go-playground/validator/v10"
 	"io"
 
 	// для краткости даем короткий алиас пакету
@@ -64,5 +65,19 @@ func New(log *slog.Logger, urlSaver URLSaver) http.HandlerFunc {
 
 		// Запишем ещё один лог. Лучше больше логов
 		log.Info("request body decoded", slog.Any("req", req))
+
+		// Создаем объект валидатора
+		// и передаём в него структура, которую нужно провалидировать
+		if err := validator.New().Struct(req); err != nil {
+			// Приводим ошибку к типу ошибки валидации
+			var validateErr validator.ValidationErrors
+			errors.As(err, &validateErr)
+
+			log.Error("invalid request", sl.Err(err))
+
+			render.JSON(w, r, resp.Error(validateErr.Error()))
+
+			return
+		}
 	}
 }
