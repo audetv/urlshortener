@@ -3,6 +3,7 @@ package save
 import (
 	"errors"
 	"github.com/audetv/urlshortener/internal/lib/logger/sl"
+	"github.com/audetv/urlshortener/internal/lib/random"
 	"github.com/go-playground/validator/v10"
 	"io"
 
@@ -23,6 +24,9 @@ type Response struct {
 	resp.Response
 	Alias string `json:"alias"`
 }
+
+// TODO: move to config if needed
+const aliasLength = 6
 
 // URLSaver хендлер будет сохранять полученные URL-строки,
 // поэтому ему нужен Storage, а точнее его метод — SaveURL.
@@ -78,6 +82,12 @@ func New(log *slog.Logger, urlSaver URLSaver) http.HandlerFunc {
 			render.JSON(w, r, resp.ValidationError(validateErr))
 
 			return
+		}
+
+		// Alias проверяем вручную. Если он пустой — генерируем случайный:
+		alias := req.Alias
+		if alias == "" {
+			alias = random.NewRandomString(aliasLength)
 		}
 	}
 }
