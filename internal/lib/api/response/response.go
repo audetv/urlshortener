@@ -30,7 +30,7 @@ func Error(msg string) Response {
 	}
 }
 
-func OK(msg string) Response {
+func OK() Response {
 	return Response{
 		Status: StatusOK,
 	}

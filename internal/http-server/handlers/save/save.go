@@ -115,3 +115,10 @@ func New(log *slog.Logger, urlSaver URLSaver) http.HandlerFunc {
 		responseOK(w, r, alias)
 	}
 }
+
+func responseOK(w http.ResponseWriter, r *http.Request, alias string) {
+	render.JSON(w, r, Response{
+		Response: resp.OK(),
+		Alias:    alias,
+	})
+}
