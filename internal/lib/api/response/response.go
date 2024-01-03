@@ -14,3 +14,18 @@ const (
 	StatusOK    = "OK"
 	StatusError = "Error"
 )
+
+// Error Код можно сделать немного красивее, если вынести повторяющийся код
+// формирования объекта ответа в общую функцию.
+func Error(msg string) Response {
+	return Response{
+		Status: StatusError,
+		Error:  msg,
+	}
+}
+
+func OK(msg string) Response {
+	return Response{
+		Status: StatusOK,
+	}
+}
