@@ -3,8 +3,11 @@ package main
 import (
 	"fmt"
 	"github.com/audetv/urlshortener/internal/config"
+	mwLogger "github.com/audetv/urlshortener/internal/http-server/middleware/logger"
 	"github.com/audetv/urlshortener/internal/lib/logger/sl"
 	"github.com/audetv/urlshortener/internal/storage/sqlite"
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 	"log/slog"
 	"os"
 )
@@ -29,6 +32,16 @@ func main() {
 		log.Error("failed to initialize storage", sl.Err(err))
 	}
 	fmt.Println(storage)
+
+	// создадим объект роутера и подключим к нему необходимый middleware
+	router := chi.NewRouter()
+
+	router.Use(middleware.RequestID) // Добавляет request_id в каждый запрос, для трейсинга
+	router.Use(middleware.Logger)    // Логирование всех запросов
+	router.Use(mwLogger.New(log))
+	router.Use(middleware.Recoverer) // Если где-то внутри сервера (обработчика запроса) произойдет паника, приложение не должно упасть
+	router.Use(middleware.URLFormat) // Парсер URLов поступающих запросов
+
 }
 
 func setupLogger(env string) *slog.Logger {
