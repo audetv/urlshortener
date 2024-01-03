@@ -23,8 +23,13 @@ func TestSaveHandler(t *testing.T) {
 		mockError error  // Ошибку, которую вернет mock
 	}{
 		{
-			name:  "success",
+			name:  "Success",
 			alias: "test_alias",
+			url:   "https://svodd.ru",
+		},
+		{
+			name:  "Empty alias",
+			alias: "",
 			url:   "https://svodd.ru",
 		},
 		// Другие кейсы
