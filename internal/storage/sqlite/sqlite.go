@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/audetv/urlshortener/internal/storage"
 	"github.com/mattn/go-sqlite3"
+	_ "github.com/mattn/go-sqlite3"
 )
 
 // Storage структура для объекта Storage
@@ -28,7 +29,7 @@ func New(storagePath string) (*Storage, error) {
 
 	// Создаем таблицу если её ещё нет
 	stmt, err := db.Prepare(`
-	CREATE TABLE IF NOT EXIST url(
+	CREATE TABLE IF NOT EXISTS url(
 	    id INTEGER PRIMARY KEY,
 	    alias TEXT NOT NULL UNIQUE,
 	    url TEXT NOT NULL
