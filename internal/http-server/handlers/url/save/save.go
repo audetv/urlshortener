@@ -32,6 +32,8 @@ const aliasLength = 6
 // URLSaver хендлер будет сохранять полученные URL-строки,
 // поэтому ему нужен Storage, а точнее его метод — SaveURL.
 // Опишем соответствующий интерфейс:
+//
+//go:generate go run github.com/vektra/mockery/v2@v2.28.2 --name=URLSaver
 type URLSaver interface {
 	SaveURL(URL, alias string) (int64, error)
 }
