@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/audetv/urlshortener/internal/lib/logger/sl"
 	"github.com/audetv/urlshortener/internal/lib/random"
+	"github.com/audetv/urlshortener/internal/storage"
 	"github.com/go-playground/validator/v10"
 	"io"
 
@@ -89,5 +90,28 @@ func New(log *slog.Logger, urlSaver URLSaver) http.HandlerFunc {
 		if alias == "" {
 			alias = random.NewRandomString(aliasLength)
 		}
+
+		// сохранить URL и Alias, а после — вернуть ответ с сообщением об успехе.
+		id, err := urlSaver.SaveURL(req.URL, alias)
+		if errors.Is(err, storage.ErrURLExists) {
+			// Отдельно обрабатываем ситуацию,
+			// когда запись с таким Alias уже существует
+			log.Info("url already exists", slog.String("url", req.URL))
+
+			render.JSON(w, r, resp.Error("url already exists"))
+
+			return
+		}
+		if err != nil {
+			log.Error("failed to add url", sl.Err(err))
+
+			render.JSON(w, r, resp.Error("failed to add url"))
+
+			return
+		}
+
+		log.Info("url added", slog.Int64("id", id))
+
+		responseOK(w, r, alias)
 	}
 }
