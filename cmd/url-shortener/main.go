@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/audetv/urlshortener/internal/config"
+	"github.com/audetv/urlshortener/internal/http-server/handlers/redirect"
 	"github.com/audetv/urlshortener/internal/http-server/handlers/url/save"
 	mwLogger "github.com/audetv/urlshortener/internal/http-server/middleware/logger"
 	"github.com/audetv/urlshortener/internal/lib/logger/sl"
@@ -42,6 +43,7 @@ func main() {
 	router.Use(middleware.URLFormat) // Парсер URLов поступающих запросов
 
 	router.Post("/", save.New(log, storage))
+	router.Get("/{alias}", redirect.New(log, storage))
 
 }
 
