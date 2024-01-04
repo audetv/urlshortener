@@ -44,7 +44,17 @@ func main() {
 	router.Use(middleware.Recoverer) // Если где-то внутри сервера (обработчика запроса) произойдет паника, приложение не должно упасть
 	router.Use(middleware.URLFormat) // Парсер URLов поступающих запросов
 
-	router.Post("/url", save.New(log, storage))
+	// Все пути этого роутера будут начинаться с префикса `/url`
+	router.Route("/url", func(r chi.Router) {
+		// Подключаем middleware BasicAuth авторизацию
+		r.Use(middleware.BasicAuth("urlshortener", map[string]string{
+			// Передаём в BasicAuth логин и пароль из конфига
+			cfg.HTTPServer.User: cfg.HTTPServer.Password,
+		}))
+
+		r.Post("/", save.New(log, storage))
+	})
+
 	router.Get("/{alias}", redirect.New(log, storage))
 
 	log.Info("starting server", slog.String("address", cfg.Address))
