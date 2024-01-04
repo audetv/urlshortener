@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"github.com/audetv/urlshortener/internal/storage"
 	"github.com/mattn/go-sqlite3"
-	_ "github.com/mattn/go-sqlite3"
 )
 
 // Storage структура для объекта Storage
