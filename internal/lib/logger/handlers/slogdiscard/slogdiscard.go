@@ -9,8 +9,16 @@ import (
 	"log/slog"
 )
 
+// NewDiscardLogger creates a new logger that discards all log messages.
 func NewDiscardLogger() *slog.Logger {
-	return slog.New(NewDiscardHandler())
+	// Create a new discard handler
+	handler := NewDiscardHandler()
+
+	// Create a new logger with the discard handler
+	logger := slog.New(handler)
+
+	// Return the new logger
+	return logger
 }
 
 type DiscardHandler struct {
