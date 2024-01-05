@@ -32,6 +32,18 @@ func TestSaveHandler(t *testing.T) {
 			alias: "",
 			url:   "https://svodd.ru",
 		},
+		{
+			name:      "Empty URL",
+			alias:     "test_alias",
+			url:       "",
+			respError: "field URL is a required field",
+		},
+		{
+			name:      "Invalid URL",
+			alias:     "test_alias",
+			url:       "invalid url",
+			respError: "field URL is not a valid URL",
+		},
 		// Другие кейсы
 	}
 
