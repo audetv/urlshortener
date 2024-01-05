@@ -11,6 +11,7 @@ var (
 )
 
 // GetRedirect returns the final URL after redirection.
+// Эта функция нужна только для теста редиректа
 func GetRedirect(url string) (string, error) {
 	const op = "api.GetRedirect"
 
