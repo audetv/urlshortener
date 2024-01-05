@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/audetv/urlshortener/internal/config"
 	"github.com/audetv/urlshortener/internal/http-server/handlers/redirect"
+	"github.com/audetv/urlshortener/internal/http-server/handlers/url/delete"
 	"github.com/audetv/urlshortener/internal/http-server/handlers/url/save"
 	mwLogger "github.com/audetv/urlshortener/internal/http-server/middleware/logger"
 	"github.com/audetv/urlshortener/internal/http-server/server"
@@ -54,6 +55,7 @@ func main() {
 		}))
 
 		r.Post("/", save.New(log, storage))
+		r.Delete("/{alias}", delete.New(log, storage))
 	})
 
 	router.Get("/{alias}", redirect.New(log, storage))
