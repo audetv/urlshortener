@@ -27,7 +27,7 @@ type Response struct {
 }
 
 // TODO: move to config if needed
-const aliasLength = 6
+const aliasLength = 7
 
 // URLSaver хендлер будет сохранять полученные URL-строки,
 // поэтому ему нужен Storage, а точнее его метод — SaveURL.
