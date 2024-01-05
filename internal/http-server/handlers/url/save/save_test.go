@@ -36,7 +36,9 @@ func TestSaveHandler(t *testing.T) {
 	}
 
 	for _, tc := range cases {
+		tc := tc // Create a new variable to avoid closure issues
 		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			// Создаём объект мока стораджа
 			urlSaverMock := mocks.NewURLSaver(t)
 
