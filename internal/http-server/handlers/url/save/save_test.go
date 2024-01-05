@@ -44,7 +44,13 @@ func TestSaveHandler(t *testing.T) {
 			url:       "invalid url",
 			respError: "field URL is not a valid URL",
 		},
-		// Другие кейсы
+		{
+			name:      "SaveURL error",
+			alias:     "test_alias",
+			url:       "https://svodd.ru",
+			respError: "failed to add url",
+			mockError: fmt.Errorf("unexpected error"),
+		},
 	}
 
 	for _, tc := range cases {
@@ -80,7 +86,9 @@ func TestSaveHandler(t *testing.T) {
 			handler.ServeHTTP(rr, req)
 
 			// Проверяем, что статус ответа корректный
-			require.Equal(t, rr.Code, http.StatusOK)
+			if rr.Code != http.StatusOK {
+				t.Errorf("expected status code %d but got %d", http.StatusOK, rr.Code)
+			}
 
 			body := rr.Body.String()
 
@@ -91,8 +99,6 @@ func TestSaveHandler(t *testing.T) {
 
 			// Проверяем наличие требуемой ошибки в ответе
 			require.Equal(t, tc.respError, resp.Error)
-
-			// Другие проверки
 		})
 	}
 }
