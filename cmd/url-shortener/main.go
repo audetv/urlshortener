@@ -5,13 +5,13 @@ import (
 	"github.com/audetv/urlshortener/internal/http-server/handlers/redirect"
 	"github.com/audetv/urlshortener/internal/http-server/handlers/url/save"
 	mwLogger "github.com/audetv/urlshortener/internal/http-server/middleware/logger"
+	"github.com/audetv/urlshortener/internal/http-server/server"
 	"github.com/audetv/urlshortener/internal/lib/logger/handlers/slogpretty"
 	"github.com/audetv/urlshortener/internal/lib/logger/sl"
 	"github.com/audetv/urlshortener/internal/storage/sqlite"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"log/slog"
-	"net/http"
 	"os"
 )
 
@@ -61,13 +61,7 @@ func main() {
 	log.Info("starting server", slog.String("address", cfg.Address))
 
 	// Создаем объект сервера
-	srv := &http.Server{
-		Addr:         cfg.Address,
-		Handler:      router,
-		ReadTimeout:  cfg.HTTPServer.Timeout,
-		WriteTimeout: cfg.HTTPServer.Timeout,
-		IdleTimeout:  cfg.HTTPServer.IdleTimeout,
-	}
+	srv := server.New(cfg, router)
 
 	// Запускаем сервер
 	if err := srv.ListenAndServe(); err != nil {
