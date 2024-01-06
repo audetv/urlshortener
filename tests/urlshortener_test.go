@@ -2,9 +2,12 @@ package tests
 
 import (
 	"github.com/audetv/urlshortener/internal/http-server/handlers/url/save"
+	"github.com/audetv/urlshortener/internal/lib/api"
 	"github.com/audetv/urlshortener/internal/lib/random"
 	"github.com/brianvoe/gofakeit/v6"
 	"github.com/gavv/httpexpect/v2"
+	"github.com/stretchr/testify/require"
+	"net/http"
 	"net/url"
 	"testing"
 )
@@ -36,6 +39,72 @@ func TestURLShortener_HappyPath(t *testing.T) {
 		WithBasicAuth("user", "password"). // Авторизуемся
 		Expect().                          // Далее перечисляем наши ожидания от ответа
 		Status(200).                       // Ожидаем код статуса 200
-		JSON().Object().                   // Ожидаем, что в теле ответа будет JSON
-		ContainsKey("alias")               // Проверяем, что в теле есть ключ "alias"
+		JSON().
+		Object().            // Ожидаем, что в теле ответа будет JSON
+		ContainsKey("alias") // Проверяем, что в теле есть ключ "alias"
+}
+
+func TestURLShortener_SaveRedirect(t *testing.T) {
+	testCases := []struct {
+		name  string
+		alias string
+		url   string
+		error string
+	}{
+		{
+			name:  "Valid URL",
+			url:   gofakeit.URL(),
+			alias: gofakeit.Word() + gofakeit.Word(),
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			u := url.URL{
+				Scheme: "http",
+				Host:   host,
+			}
+
+			e := httpexpect.Default(t, u.String())
+
+			resp := e.POST("/url").
+				WithJSON(save.Request{
+					URL:   tc.url,
+					Alias: tc.alias,
+				}).
+				WithBasicAuth("user", "password").
+				Expect().Status(http.StatusOK).
+				JSON().Object()
+
+			if tc.error != "" {
+				resp.NotContainsKey("alias")
+				resp.Value("error").IsEqual(tc.error)
+				return
+			}
+
+			alias := tc.alias
+
+			if tc.alias != "" {
+				resp.Value("alias").String().IsEqual(tc.alias)
+			} else {
+				resp.Value("alias").String().NotEmpty()
+
+				alias = resp.Value("alias").String().Raw()
+			}
+
+			testRedirect(t, alias, tc.url)
+		})
+	}
+}
+
+func testRedirect(t *testing.T, alias string, urlToRedirect string) {
+	u := url.URL{
+		Scheme: "http",
+		Host:   host,
+		Path:   alias,
+	}
+	redirectedToURL, err := api.GetRedirect(u.String())
+	require.NoError(t, err)
+
+	require.Equal(t, urlToRedirect, redirectedToURL)
 }
